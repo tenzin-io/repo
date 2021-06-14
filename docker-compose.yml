@@ -1,0 +1,30 @@
+---
+version: '3'
+services:
+#
+# frontend proxy
+#
+  nginx:
+    image: nginx:mainline
+    restart: always
+    volumes:
+      - ./nginx_config:/etc/nginx
+    ports:
+      - 443:443
+      - 80:80
+
+#
+# artifactory service
+#
+  artifactory:
+    image:  docker.bintray.io/jfrog/artifactory-jcr:7.19.8
+    restart: unless-stopped
+    volumes:
+      - artifactory_data:/var/opt/jfrog/artifactory
+    environment:
+      - 'JF_SHARED_EXTRAJAVAOPTS=-Xms512m -Xmx2g -Xss256k -XX:+UseG1GC'
+      - 'JF_ACCESS_TOMCAT_CONNECTOR_MAXTHREADS=200'
+      - 'JF_ARTIFACTORY_TOMCAT_CONNECTOR_MAXTHREADS=50'
+
+volumes:
+  artifactory_data:
