@@ -5,11 +5,9 @@ services:
 # frontend proxy
 #
   nginx:
-    image: nginx:mainline
+    build:
+      context: ./build-nginx
     restart: always
-    volumes:
-      - ./nginx/nginx_config:/etc/nginx/conf.d:ro
-      - ./nginx/nginx_certs:/nginx_certs:ro
     ports:
       - 443:443
       - 80:80
@@ -18,12 +16,11 @@ services:
 # artifactory service
 #
   artifactory:
-    image:  docker.bintray.io/jfrog/artifactory-jcr:7.27.3
+    build:
+      context: ./build-artifactory
     restart: unless-stopped
     volumes:
       - artifactory_data:/var/opt/jfrog/artifactory
-      - ./artifactory/bootstrap:/bootstrap
-      - artifactory_backup:/backups
     environment:
       - 'JF_SHARED_EXTRAJAVAOPTS=-Xms512m -Xmx12g -Xss256k -XX:+UseG1GC'
       - 'JF_ACCESS_TOMCAT_CONNECTOR_MAXTHREADS=200'
@@ -31,4 +28,3 @@ services:
 
 volumes:
   artifactory_data:
-  artifactory_backup:
