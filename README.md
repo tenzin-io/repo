@@ -1,2 +1,2 @@
 # README
-A repository for deploying JFrog Container Registry service.
+A repository to deploy JFrog Container Registry service.
