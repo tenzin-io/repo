@@ -1,23 +1,40 @@
 ---
 version: '3'
 services:
+
+#
+# mkcert
+#
+  mkcert:
+    build:
+      context: ./build-mkcert
+    environment:
+      - 'CAROOT=/certs.d'
+      - 'CERT_HOSTNAME=repo'
+      - 'CERT_DOMAIN=tenzin.io'
+    volumes:
+      - certs_data:/certs.d/
+
 #
 # frontend proxy
 #
   nginx:
     build:
       context: ./build-nginx
+    volumes:
+      - certs_data:/etc/nginx/certs.d/
     restart: always
     ports:
       - 443:443
       - 80:80
+    depends_on:
+      - mkcert
 
 #
 # artifactory service
 #
   artifactory:
-    build:
-      context: ./build-artifactory
+    image: docker.bintray.io/jfrog/artifactory-jcr:7.37.14
     restart: unless-stopped
     volumes:
       - artifactory_data:/var/opt/jfrog/artifactory
@@ -25,6 +42,9 @@ services:
       - 'JF_SHARED_EXTRAJAVAOPTS=-Xms512m -Xmx12g -Xss256k -XX:+UseG1GC'
       - 'JF_ACCESS_TOMCAT_CONNECTOR_MAXTHREADS=200'
       - 'JF_ARTIFACTORY_TOMCAT_CONNECTOR_MAXTHREADS=50'
+    depends_on:
+      - nginx
 
 volumes:
   artifactory_data:
+  certs_data:
