@@ -6,8 +6,7 @@ services:
 # mkcert
 #
   mkcert:
-    build:
-      context: ./build-mkcert
+    image: ghcr.io/tenzin-io/mkcert:amd64-v1
     environment:
       - 'CERT_HOSTNAME=repo'
       - 'CERT_DOMAIN=tenzin.io'
