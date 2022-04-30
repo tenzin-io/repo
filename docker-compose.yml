@@ -31,7 +31,8 @@ services:
 # artifactory service
 #
   artifactory:
-    image: docker.bintray.io/jfrog/artifactory-jcr:7.37.14
+    build: 
+      context: ./build-artifactory
     restart: unless-stopped
     volumes:
       - artifactory_data:/var/opt/jfrog/artifactory
